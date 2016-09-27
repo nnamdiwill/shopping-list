@@ -9,10 +9,10 @@ var storage = server.storage;
 chai.use(chaiHttp);
 
 describe('Shopping List', function() {
-     it('should list items on GET', function(done) {
+    it('should list items on GET', function(done) {
 
-    
-     chai.request(app)
+
+        chai.request(app)
             .get('/items')
             .end(function(err, res) {
                 should.equal(err, null);
@@ -31,7 +31,38 @@ describe('Shopping List', function() {
                 done();
             });
     });
-    it('should add an item on post');
-    it('should edit an item on put');
-    it('should delete an item on delete');
-}); 
+    it('should add an item on PUT', function(done) {
+        chai.request(app)
+            .put('/items/3')
+            .send({
+                'id': 3,
+                'name': 'Kaleb'
+            })
+            .end(function(err, res) {
+                should.equal(err, null);
+                res.should.have.status(201);
+                res.should.be.json;
+
+                done();
+            });
+    });
+
+    it('should delete an item on DELETE', function(done) {
+        chai.request(app)
+            .delete('/items/3')
+            .end(function(err, res) {
+                //should.equal(err, null);
+                res.should.have.status(404);
+                res.body.should.have.property('_id');
+
+                done();
+            });
+    });
+
+    after(function(done) {
+        Item.remove(function() {
+            done();
+
+        });
+    });
+});
